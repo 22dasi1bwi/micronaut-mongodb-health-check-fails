@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.example
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: maven
+features: [ annotation-api, app-name, http-client, junit, kotlin, kotlin-application, logback, maven, mongo-reactive, netty-server, readme, shade, testcontainers, yaml ]

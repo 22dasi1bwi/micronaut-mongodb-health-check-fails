@@ -5,12 +5,12 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import io.micronaut.test.support.TestPropertyProvider
 import io.restassured.RestAssured
 import io.restassured.builder.RequestSpecBuilder
-import jakarta.inject.Inject
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.utility.DockerImageName
+import javax.inject.Inject
 
 val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:4.0.10").toString())
 

@@ -5,6 +5,4 @@ micronaut:
     netty:
       max-header-size: 20000
 mongodb:
-  uri: 'mongodb://localhost:57017/sacs'
-  connection-pool:
-    max-connection-idle-time: 'PT1M'
+  uri: ${MONGODB_URI}

@@ -1,20 +1,41 @@
 package com.example
 
-import io.micronaut.runtime.EmbeddedApplication
+import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import io.micronaut.test.support.TestPropertyProvider
+import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
 import jakarta.inject.Inject
+import org.hamcrest.Matchers
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.testcontainers.containers.MongoDBContainer
+import org.testcontainers.utility.DockerImageName
+
+val mongoDBContainer = MongoDBContainer(DockerImageName.parse("mongo:4.0.10").toString())
 
 @MicronautTest
-class MicronautmongodbreactivehealthcheckfailsTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class MicronautmongodbreactivehealthcheckfailsTest : TestPropertyProvider {
 
     @Inject
-    lateinit var application: EmbeddedApplication<*>
+    lateinit var server: EmbeddedServer
 
     @Test
-    fun testItWorks() {
-        Assertions.assertTrue(application.isRunning)
+    fun `performing Health-Check fails`() {
+        RestAssured.requestSpecification = RequestSpecBuilder().setBaseUri(server.uri.toString()).build()
+
+        RestAssured.given().request()
+            .get("/health")
+            .then()
+            .statusCode(200)
+            .body(Matchers.equalTo("""{"status":"UP"}"""))
     }
 
+    override fun getProperties(): Map<String, String> {
+        if (!mongoDBContainer.isRunning) {
+            mongoDBContainer.start()
+        }
+        return mapOf("MONGODB_URI" to mongoDBContainer.replicaSetUrl)
+    }
 }
